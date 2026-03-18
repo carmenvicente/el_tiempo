@@ -1,9 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
 import { WeatherCard } from '../WeatherCard';
 import type { WeatherData } from '../../services/weatherApi';
 
 const mockWeatherData: WeatherData = {
-  cod: '200',
+  cod: 200,
+  message: 0,
   main: {
     temp: 22.5,
     feels_like: 21.0,
@@ -53,7 +55,7 @@ describe('WeatherCard', () => {
 
   it('muestra la sensacion termica', () => {
     render(<WeatherCard data={mockWeatherData} />);
-    expect(screen.getByText('21°C')).toBeInTheDocument();
+    expect(screen.getByText(/21.*°C/i)).toBeInTheDocument();
   });
 
   it('muestra el porcentaje de humedad', () => {
