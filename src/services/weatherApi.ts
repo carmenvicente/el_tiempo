@@ -5,12 +5,12 @@ export type { CurrentWeather, WeatherCondition, Wind, City, WeatherData, Weather
 const API_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherApiError extends Error {
-  constructor(
-    public code: number,
-    message: string
-  ) {
+  code: number;
+
+  constructor(code: number, message: string) {
     super(message);
     this.name = 'WeatherApiError';
+    this.code = code;
   }
 }
 
@@ -18,7 +18,7 @@ function getApiKey(): string | undefined {
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     return import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
   }
-  return process.env.VITE_OPENWEATHERMAP_API_KEY;
+  return undefined;
 }
 
 export async function getCurrentWeather(city: string): Promise<WeatherData> {
@@ -49,7 +49,7 @@ export async function getCurrentWeather(city: string): Promise<WeatherData> {
           throw new WeatherApiError(401, 'API key inválida. Verifica tu clave de OpenWeatherMap');
         default:
           throw new WeatherApiError(
-            errorData.cod || response.status,
+            errorData.code || response.status,
             errorData.message || `Error HTTP: ${response.status}`
           );
       }
